@@ -1,0 +1,165 @@
+<?php
+/**
+ * Template Name: Halaman Depan
+ * Description: Template untuk halaman depan portofolio
+ */
+
+get_header(); ?>
+
+<!-- Hero -->
+<div style="margin-bottom:2.5rem;">
+  <p class="mono" style="font-size:0.72rem;color:#6b6b6b;margin-bottom:0.5rem;">DOSEN · PENELITI · PENGEMBANG</p>
+  <h1 class="page-title">Arif Setiawan</h1>
+  <p class="page-subtitle">Pendidikan Informatika, Universitas Muhammadiyah Surakarta</p>
+  <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+    <a href="<?php echo esc_url( home_url( '/biografi' ) ); ?>" class="btn-primary" style="display:inline-block;padding:0.45rem 1.1rem;border:1px solid #1a1a1a;font-size:0.82rem;text-decoration:none;color:#1a1a1a;transition:background 0.15s;" onmouseover="this.style.background='#1a1a1a';this.style.color='#f8f6f1'" onmouseout="this.style.background='transparent';this.style.color='#1a1a1a'">Lihat Biografi</a>
+    <a href="<?php echo esc_url( home_url( '/penelitian' ) ); ?>" style="display:inline-block;padding:0.45rem 1.1rem;border:1px solid #d4cfc6;font-size:0.82rem;text-decoration:none;color:#6b6b6b;transition:border-color 0.15s;" onmouseover="this.style.borderColor='#1a1a1a';this.style.color='#1a1a1a'" onmouseout="this.style.borderColor='#d4cfc6';this.style.color='#6b6b6b'">Penelitian</a>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Tentang -->
+<section id="tentang">
+  <h2><span class="section-emoji">👤</span>Tentang</h2>
+  <p>Selamat datang di halaman personal saya. Saya adalah dosen di Program Studi Pendidikan Informatika, Universitas Muhammadiyah Surakarta, dengan fokus penelitian pada <span class="italic-serif">teknologi pendidikan, pengembangan media pembelajaran, dan rekayasa perangkat lunak</span>.</p>
+  <p>Platform ini saya gunakan untuk berbagi tulisan, hasil penelitian, dan proyek pengembangan yang berkaitan dengan dunia pendidikan dan teknologi informasi.</p>
+</section>
+
+<!-- Keahlian -->
+<section id="keahlian">
+  <h2><span class="section-emoji">🛠</span>Keahlian</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;margin-top:0.5rem;">
+    <?php
+    $skills = get_option( 'portofolio_skills', array() );
+    if ( ! empty( $skills ) ) :
+      foreach ( $skills as $skill ) :
+    ?>
+    <div style="border:1px solid #d4cfc6;padding:0.75rem 1rem;border-radius:3px;background:#fff;">
+      <p style="font-weight:600;font-size:0.85rem;margin:0 0 0.25rem;"><?php echo esc_html( $skill['name'] ); ?></p>
+      <p style="font-size:0.78rem;color:#6b6b6b;margin:0;"><?php echo esc_html( $skill['description'] ); ?></p>
+    </div>
+    <?php
+      endforeach;
+    else :
+    ?>
+    <div style="border:1px solid #d4cfc6;padding:0.75rem 1rem;border-radius:3px;background:#fff;"><p style="font-weight:600;font-size:0.85rem;margin:0 0 0.25rem;">Python / Django</p><p style="font-size:0.78rem;color:#6b6b6b;margin:0;">Backend & Web Framework</p></div>
+    <div style="border:1px solid #d4cfc6;padding:0.75rem 1rem;border-radius:3px;background:#fff;"><p style="font-weight:600;font-size:0.85rem;margin:0 0 0.25rem;">Teknologi Pendidikan</p><p style="font-size:0.78rem;color:#6b6b6b;margin:0;">Media & E-Learning</p></div>
+    <div style="border:1px solid #d4cfc6;padding:0.75rem 1rem;border-radius:3px;background:#fff;"><p style="font-weight:600;font-size:0.85rem;margin:0 0 0.25rem;">Rekayasa Perangkat Lunak</p><p style="font-size:0.78rem;color:#6b6b6b;margin:0;">Sistem Informasi</p></div>
+    <div style="border:1px solid #d4cfc6;padding:0.75rem 1rem;border-radius:3px;background:#fff;"><p style="font-weight:600;font-size:0.85rem;margin:0 0 0.25rem;">Tailwind CSS / HTML5</p><p style="font-size:0.78rem;color:#6b6b6b;margin:0;">Frontend Development</p></div>
+    <?php endif; ?>
+  </div>
+</section>
+
+<!-- Publikasi Terbaru -->
+<section id="publikasi-terbaru">
+  <h2><span class="section-emoji">📄</span>Publikasi Terbaru</h2>
+  <?php
+  $publications = new WP_Query( array(
+    'post_type' => 'publikasi',
+    'posts_per_page' => 3,
+    'orderby' => 'date',
+    'order' => 'DESC',
+  ) );
+  
+  if ( $publications->have_posts() ) :
+    while ( $publications->have_posts() ) : $publications->the_post();
+    $year = get_post_meta( get_the_ID(), 'year', true );
+    $journal = get_post_meta( get_the_ID(), 'journal', true );
+    $authors = get_post_meta( get_the_ID(), 'authors', true );
+    $pub_url = get_post_meta( get_the_ID(), 'url', true );
+    $keywords = get_post_meta( get_the_ID(), 'keywords', true );
+  ?>
+  <div class="card">
+    <p class="card-meta"><?php echo esc_html( $year ); ?> · <?php echo esc_html( $journal ); ?></p>
+    <p class="card-title"><a href="<?php echo esc_url( $pub_url ?: get_permalink() ); ?>" target="_blank" style="color:#1a1a1a;text-decoration:none;"><?php the_title(); ?></a></p>
+    <p style="font-size:0.82rem;color:#6b6b6b;margin:0.25rem 0 0.5rem;"><?php echo esc_html( $authors ); ?></p>
+    <?php if ( $keywords ) : 
+      $keyword_array = explode( ' ', $keywords );
+      foreach ( $keyword_array as $kw ) :
+    ?>
+    <span class="tag"><?php echo esc_html( $kw ); ?></span>
+    <?php 
+      endforeach;
+    endif; ?>
+  </div>
+  <?php
+    endwhile;
+    wp_reset_postdata();
+  else :
+  ?>
+  <div class="card">
+    <p class="card-meta">2024 · Jurnal Pendidikan Teknologi</p>
+    <p class="card-title">Pengembangan Media Pembelajaran Berbasis Web untuk Meningkatkan Kompetensi Mahasiswa</p>
+    <p style="font-size:0.82rem;color:#6b6b6b;margin:0.25rem 0 0.5rem;">Arif Setiawan, et al.</p>
+    <span class="tag">e-learning</span><span class="tag">media pembelajaran</span>
+  </div>
+  <?php endif; ?>
+  <a href="<?php echo esc_url( home_url( '/penelitian' ) ); ?>" style="font-size:0.82rem;color:#1a5276;">Lihat semua publikasi →</a>
+</section>
+
+<!-- Portofolio Terbaru -->
+<section id="portofolio-terbaru">
+  <h2><span class="section-emoji">💼</span>Portofolio Terbaru</h2>
+  <div style="display:grid;gap:0.75rem;">
+    <?php
+    $projects = new WP_Query( array(
+      'post_type' => 'portofolio',
+      'posts_per_page' => 3,
+      'orderby' => 'date',
+      'order' => 'DESC',
+    ) );
+    
+    if ( $projects->have_posts() ) :
+      while ( $projects->have_posts() ) : $projects->the_post();
+      $year = get_post_meta( get_the_ID(), 'year', true );
+      $category = get_post_meta( get_the_ID(), 'category', true );
+      $description = get_post_meta( get_the_ID(), 'description', true );
+    ?>
+    <div class="card">
+      <p class="card-meta mono"><?php echo esc_html( $year ); ?> · <?php echo esc_html( $category ); ?></p>
+      <p class="card-title"><?php the_title(); ?></p>
+      <p style="font-size:0.82rem;color:#6b6b6b;margin:0.25rem 0 0;"><?php echo esc_html( $description ?: get_the_excerpt() ); ?></p>
+    </div>
+    <?php
+      endwhile;
+      wp_reset_postdata();
+    else :
+    ?>
+    <div class="card">
+      <p class="card-meta mono">2024 · Web Application</p>
+      <p class="card-title">Sistem Informasi Akademik UMS</p>
+      <p style="font-size:0.82rem;color:#6b6b6b;margin:0.25rem 0 0;">Platform manajemen akademik berbasis Django dengan antarmuka responsif.</p>
+    </div>
+    <?php endif; ?>
+  </div>
+  <a href="<?php echo esc_url( home_url( '/portofolio' ) ); ?>" style="font-size:0.82rem;color:#1a5276;display:inline-block;margin-top:0.75rem;">Lihat semua proyek →</a>
+</section>
+
+<!-- Kontak -->
+<section id="kontak">
+  <h2><span class="section-emoji">✉️</span>Kontak</h2>
+  <p>Untuk pertanyaan akademik, kolaborasi penelitian, atau diskusi seputar teknologi pendidikan, silakan hubungi saya:</p>
+  <div class="callout">
+    <strong class="mono" style="font-size:0.8rem;">EMAIL</strong><br>
+    <a href="mailto:<?php echo get_option( 'admin_email' ); ?>"><?php echo get_option( 'admin_email' ); ?></a>
+  </div>
+  <p style="font-size:0.85rem;color:#6b6b6b;">Dosen Pendidikan Informatika<br>Universitas Muhammadiyah Surakarta</p>
+</section>
+
+<script>
+  // Highlight active TOC link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const tocLinks = document.querySelectorAll('.toc-link');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.getAttribute('id');
+    });
+    tocLinks.forEach(l => {
+      l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+
+<?php get_footer(); ?>
